@@ -91,11 +91,8 @@ function getNextSlot(roundKey, matchIndex) {
     const nextRound = roundNext[roundKey];
     if (!nextRound) return null;
 
-    if (["dezesseisAvos", "oitavas", "quartas", "semifinal"].includes(roundKey)) {
-        return { nextRound, nextIndex: matchIndex };
-    }
-
-    return null;
+    const nextIndex = Math.floor(matchIndex / 2);
+    return { nextRound, nextIndex };
 }
 
 const defaultBruno = {
