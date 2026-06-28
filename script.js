@@ -1,4 +1,4 @@
-﻿// =======================================
+// =======================================
 // BOLÃO COPA 2026
 // =======================================
 
@@ -175,9 +175,6 @@ window.onload = () => {
     atualizarBrunoExemplo();
     inserirBrunoSeAusente();
     mostrarParticipantes();
-    if (window.location.hash === "#public") {
-        abrirPublico();
-    }
 };
 
 function salvarParticipantes() {
@@ -254,7 +251,7 @@ function mostrarInicio() {
 }
 
 function mostrarSecao(id) {
-    ["inicio", "perfil", "resultados", "ranking", "public"].forEach(sec => {
+    ["inicio", "perfil", "resultados", "ranking"].forEach(sec => {
         const el = document.getElementById(sec);
         if (el) el.classList.toggle("hidden", sec !== id);
     });
@@ -366,99 +363,6 @@ function salvarPalpites() {
 function abrirResultados() {
     mostrarSecao("resultados");
     desenharResultados();
-}
-
-function abrirPublico() {
-    mostrarSecao("public");
-    atualizarLinkPublico();
-    desenharPublico();
-}
-
-function atualizarLinkPublico() {
-    const linkInput = document.getElementById("publicLink");
-    const linkAnchor = document.getElementById("publicLinkAnchor");
-    const message = document.getElementById("publicLinkMessage");
-    if (!linkInput || !linkAnchor || !message) return;
-    const url = new URL(window.location.href);
-    url.hash = "public";
-    const fullUrl = url.toString();
-    linkInput.value = fullUrl;
-    linkAnchor.href = fullUrl;
-    linkAnchor.textContent = "Abrir link público";
-    message.textContent = "Copie esse link e envie para quem quiser acompanhar.";
-}
-
-function copiarLinkPublico() {
-    const linkInput = document.getElementById("publicLink");
-    const message = document.getElementById("publicLinkMessage");
-    if (!linkInput || !message) return;
-
-    const text = linkInput.value;
-    if (!text) {
-        message.textContent = "Link inválido. Abra novamente a seção pública.";
-        return;
-    }
-
-    if (navigator.clipboard && navigator.clipboard.writeText) {
-        navigator.clipboard.writeText(text).then(() => {
-            message.textContent = "Link copiado com sucesso!";
-        }).catch(() => {
-            fallbackCopyText(text, message);
-        });
-    } else {
-        fallbackCopyText(text, message);
-    }
-}
-
-function fallbackCopyText(text, message) {
-    const textArea = document.createElement("textarea");
-    textArea.value = text;
-    textArea.style.position = "fixed";
-    textArea.style.opacity = "0";
-    document.body.appendChild(textArea);
-    textArea.focus();
-    textArea.select();
-    try {
-        document.execCommand("copy");
-        message.textContent = "Link copiado com sucesso!";
-    } catch (err) {
-        message.textContent = "Erro ao copiar. Selecione e copie manualmente.";
-    }
-    document.body.removeChild(textArea);
-}
-
-function desenharPublico() {
-    const div = document.getElementById("publicResultados");
-    div.innerHTML = "";
-
-    const titulo = document.createElement("h3");
-    titulo.textContent = "Ranking público";
-    div.appendChild(titulo);
-
-    const ordenados = [...participantes].sort((a, b) => (b.pontos || 0) - (a.pontos || 0));
-    ordenados.forEach((p, index) => {
-        const item = document.createElement("div");
-        item.className = "public-item";
-
-        const foto = document.createElement("img");
-        foto.className = "public-foto";
-        foto.alt = p.nome;
-        foto.src = p.foto || "";
-        if (!p.foto) {
-            foto.hidden = true;
-        }
-
-        const info = document.createElement("div");
-        info.className = "public-info";
-        info.innerHTML = `
-            <strong>${index === 0 ? "🥇" : index === 1 ? "🥈" : index === 2 ? "🥉" : ""} ${p.nome}</strong>
-            <span>${p.pontos || 0} pts</span>
-        `;
-
-        item.appendChild(foto);
-        item.appendChild(info);
-        div.appendChild(item);
-    });
 }
 
 function desenharResultados() {
