@@ -1,0 +1,117 @@
+﻿<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bolão Copa 2026</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <header>
+        <div class="top-bar">
+            <div>
+                <span>GE Style</span>
+                <h1>Bolão Mata-Mata</h1>
+            </div>
+            <div class="header-badge">2026</div>
+        </div>
+        <p>Cadastre participantes, salve a foto do chaveamento e acompanhe o ranking automaticamente.</p>
+    </header>
+
+    <main class="container">
+        <section id="inicio">
+            <div class="card">
+                <h2>Novo participante</h2>
+                <input type="text" id="nome" placeholder="Nome do participante">
+                <button onclick="adicionarParticipante()">➕ Adicionar participante</button>
+            </div>
+
+            <div class="card">
+                <h2>Participantes</h2>
+                <div id="listaParticipantes"></div>
+            </div>
+            <div class="card">
+                <h2>Acompanhar resultados</h2>
+                <button class="salvar" onclick="abrirPublico()">🔗 Gerar link público</button>
+            </div>
+        </section>
+
+        <section id="perfil" class="hidden">
+            <button class="voltar" onclick="voltar()">⬅ Voltar</button>
+            <div class="card">
+                <h2 id="tituloParticipante">Participante</h2>
+                <hr>
+                <h3>📷 Foto do chaveamento</h3>
+                <input type="file" accept="image/*" onchange="salvarFoto(event)">
+                <img id="fotoParticipante" class="foto" alt="Foto do chaveamento" hidden>
+            </div>
+
+            <div class="card">
+                <h2>Chaveamento completo</h2>
+                <div id="listaJogos"></div>
+                <div id="campeaoPreview" class="result-badge">Campeão: ainda não definido</div>
+                <button class="salvar" onclick="salvarPalpites()">💾 Salvar chaveamento</button>
+            </div>
+        </section>
+
+        <section id="resultados" class="hidden">
+            <button class="voltar" onclick="mostrarInicio()">⬅ Voltar</button>
+            <div class="card">
+                <h2>Resultados Oficiais</h2>
+                <p>Cadastre apenas os vencedores dos jogos reais. Depois clique em salvar e o ranking será atualizado.</p>
+                <div id="listaResultados"></div>
+                <button class="salvar" onclick="calcularPontuacao()">🏆 Salvar resultados e atualizar ranking</button>
+            </div>
+        </section>
+
+        <section id="ranking" class="hidden">
+            <button class="voltar" onclick="mostrarInicio()">⬅ Voltar</button>
+            <div class="card">
+                <h2>Ranking</h2>
+                <div id="listaRanking"></div>
+            </div>
+        </section>
+
+        <section id="public" class="hidden">
+            <button class="voltar" onclick="mostrarInicio()">⬅ Voltar</button>
+            <div class="card">
+                <h2>Acompanhamento Público</h2>
+                <p>Use este link para que todos acompanhem os resultados e vejam o ranking com fotos.</p>
+                <div id="publicLinkContainer">
+                    <label for="publicLink">Link para compartilhar</label>
+                    <input type="text" id="publicLink" readonly>
+                    <button class="salvar" onclick="copiarLinkPublico()">📋 Copiar link</button>
+                    <a id="publicLinkAnchor" href="#" target="_blank" class="public-link-anchor"></a>
+                </div>
+                <div id="publicLinkMessage" class="public-message"></div>
+                <div id="publicResultados"></div>
+            </div>
+        </section>
+    </main>
+
+    <nav class="menu">
+        <button onclick="mostrarInicio()">
+            🏠
+            <span>Início</span>
+        </button>
+        <button onclick="abrirResultados()">
+            ⚽
+            <span>Resultados</span>
+        </button>
+        <button onclick="abrirRanking()">
+            🏆
+            <span>Ranking</span>
+        </button>
+        <button onclick="abrirPublico()">
+            🔗
+            <span>Acompanhar</span>
+        </button>
+    </nav>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
+
