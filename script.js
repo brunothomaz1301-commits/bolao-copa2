@@ -118,6 +118,20 @@ function gerarChaveamento(roundKey, source) {
     const count = matchCounts[roundKey];
     const matches = [];
 
+    if (roundKey === "semifinal") {
+        matches.push([
+            prevWinners[0] || "A definir",
+            prevWinners[2] || "A definir"
+        ]);
+
+        matches.push([
+            prevWinners[3] || "A definir",
+            prevWinners[1] || "A definir"
+        ]);
+
+        return matches;
+    }
+
     for (let i = 0; i < count; i += 1) {
         const a = prevWinners[i * 2] || "A definir";
         const b = prevWinners[i * 2 + 1] || "A definir";
