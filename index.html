@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="pt-BR">
 
 <head>
@@ -31,10 +31,6 @@
             <div class="card">
                 <h2>Participantes</h2>
                 <div id="listaParticipantes"></div>
-            </div>
-            <div class="card">
-                <h2>Acompanhar resultados</h2>
-                <button class="salvar" onclick="abrirPublico()">🔗 Gerar link público</button>
             </div>
         </section>
 
@@ -74,21 +70,6 @@
             </div>
         </section>
 
-        <section id="public" class="hidden">
-            <button class="voltar" onclick="mostrarInicio()">⬅ Voltar</button>
-            <div class="card">
-                <h2>Acompanhamento Público</h2>
-                <p>Use este link para que todos acompanhem os resultados e vejam o ranking com fotos.</p>
-                <div id="publicLinkContainer">
-                    <label for="publicLink">Link para compartilhar</label>
-                    <input type="text" id="publicLink" readonly>
-                    <button class="salvar" onclick="copiarLinkPublico()">📋 Copiar link</button>
-                    <a id="publicLinkAnchor" href="#" target="_blank" class="public-link-anchor"></a>
-                </div>
-                <div id="publicLinkMessage" class="public-message"></div>
-                <div id="publicResultados"></div>
-            </div>
-        </section>
     </main>
 
     <nav class="menu">
@@ -103,10 +84,6 @@
         <button onclick="abrirRanking()">
             🏆
             <span>Ranking</span>
-        </button>
-        <button onclick="abrirPublico()">
-            🔗
-            <span>Acompanhar</span>
         </button>
     </nav>
 
