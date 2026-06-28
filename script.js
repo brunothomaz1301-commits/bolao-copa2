@@ -1,108 +1,5 @@
-Ir para o conteúdo
-brunothomaz1301-commits
-bolao-copa2
-Navegação do repositório
-Código
-Problemas
-Solicitações de pull
-Agentes
-Ações
-Projetos
-Wiki
-Segurança e qualidade
-Percepções
-Configurações
-Arquivos
-Acesse o arquivo
-t
-T
-.github
-index.html
-script.js
-estilo.css
-bolao-copa2
-/
-script.js
-em
-principal
-
-Editar
-
-Pré-visualização
-Modo de recuo
-
-Espaços
-Tamanho do recuo
-
-4
-modo de quebra de linha
-
-Sem embrulho
-Editando o conteúdo do arquivo script.js
-  1
-  2
-  3
-  4
-  5
-  6
-  7
-  8
-  9
-10
-11
-12
-13
-14
-15
-16
-17
-18
-19
-20
-21
-22
-23
-24
-25
-26
-27
-28
-29
-30
-31
-32
-33
-34
-35
-36
-37
-38
-39
-40
-41
-42
-43
-44
-45
-46
-47
-48
-49
-50
-51
-52
-53
-54
-55
-56
-57
-58
-59
-60
-61
-62
 // =======================================
-// BOLÃO COPA 2026
+// BOLAO COPA 2026
 // =======================================
 
 const roundKeys = ["dezesseisAvos", "oitavas", "quartas", "semifinal", "final"];
@@ -124,21 +21,21 @@ const matchCounts = {
 
 const staticMatches = [
     ["Alemanha", "Paraguai"],
-    ["França", "Suécia"],
-    ["África do Sul", "Canadá"],
-    ["Países Baixos", "Marrocos"],
-    ["Brasil", "Japão"],
+    ["Franca", "Suecia"],
+    ["Africa do Sul", "Canada"],
+    ["Paises Baixos", "Marrocos"],
+    ["Brasil", "Japao"],
     ["Noruega", "Costa do Marfim"],
-    ["México", "Equador"],
+    ["Mexico", "Equador"],
     ["Inglaterra", "Congo"],
-    ["Portugal", "Croácia"],
-    ["Espanha", "Áustria"],
-    ["Estados Unidos", "Bósnia"],
-    ["Bélgica", "Senegal"],
+    ["Portugal", "Croacia"],
+    ["Espanha", "Austria"],
+    ["Estados Unidos", "Bosnia"],
+    ["Belgica", "Senegal"],
     ["Argentina", "Cabo Verde"],
-    ["Austrália", "Egito"],
-    ["Suíça", "Argélia"],
-    ["Colômbia", "Gana"]
+    ["Australia", "Egito"],
+    ["Suica", "Argelia"],
+    ["Colombia", "Gana"]
 ];
 
 const roundPrev = {
@@ -148,24 +45,34 @@ const roundPrev = {
     final: "semifinal"
 };
 
-const roundNext = {
-    dezesseisAvos: "oitavas",
-    oitavas: "quartas",
-    quartas: "semifinal",
-    semifinal: "final"
-};
-
-let participantes = JSON.parse(localStorage.getItem("participantes")) || [];
-let officialResults = JSON.parse(localStorage.getItem("resultados")) || {
-    dezesseisAvos: [],
-    oitavas: [],
-    quartas: [],
-    semifinal: [],
-    final: [],
-    campeao: ""
-};
-
+let participantes = carregarParticipantes();
+let officialResults = normalizarPalpites(carregarLocalStorage("resultados", criarEstruturaPalpites()));
 let participanteAtual = null;
+
+participantes = participantes
+    .filter((participante) => participante && typeof participante === "object")
+    .map((participante) => ({
+        ...participante,
+        id: participante.id || Date.now(),
+        nome: participante.nome || "Participante",
+        foto: participante.foto || "",
+        palpites: normalizarPalpites(participante.palpites || {})
+    }));
+
+function carregarLocalStorage(chave, valorPadrao) {
+    try {
+        const valorSalvo = localStorage.getItem(chave);
+        return valorSalvo ? JSON.parse(valorSalvo) : valorPadrao;
+    } catch (error) {
+        console.warn(`Nao foi possivel carregar ${chave}.`, error);
+        return valorPadrao;
+    }
+}
+
+function carregarParticipantes() {
+    const valorSalvo = carregarLocalStorage("participantes", []);
+    return Array.isArray(valorSalvo) ? valorSalvo : [];
+}
 
 function salvarParticipantes() {
     localStorage.setItem("participantes", JSON.stringify(participantes));
@@ -186,6 +93,21 @@ function criarEstruturaPalpites() {
     };
 }
 
+function normalizarPalpites(palpites) {
+    const estrutura = criarEstruturaPalpites();
+
+    roundKeys.forEach((roundKey) => {
+        const valores = Array.isArray(palpites[roundKey]) ? palpites[roundKey] : [];
+        estrutura[roundKey] = Array.from(
+            { length: matchCounts[roundKey] },
+            (_, index) => valores[index] || null
+        );
+    });
+
+    estrutura.campeao = palpites.campeao || "";
+    return estrutura;
+}
+
 function gerarChaveamento(roundKey, source) {
     if (roundKey === "dezesseisAvos") {
         return staticMatches.map((match) => [...match]);
@@ -196,27 +118,23 @@ function gerarChaveamento(roundKey, source) {
     const count = matchCounts[roundKey];
     const matches = [];
 
-    if (roundKey === "semifinal") {
-        matches.push([
-            prevWinners[0] || "A definir",
-            prevWinners[2] || "A definir"
-        ]);
-
-        matches.push([
-            prevWinners[1] || "A definir",
-            prevWinners[3] || "A definir"
-        ]);
-
-        return matches;
-    }
-
-    for (let i = 0; i < count; i++) {
+    for (let i = 0; i < count; i += 1) {
         const a = prevWinners[i * 2] || "A definir";
         const b = prevWinners[i * 2 + 1] || "A definir";
         matches.push([a, b]);
     }
 
     return matches;
+}
+
+function criarBotaoTime(teamName, selected, onClick) {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.textContent = teamName;
+    button.classList.toggle("selected", selected);
+    button.disabled = teamName === "A definir";
+    button.addEventListener("click", onClick);
+    return button;
 }
 
 function mostrarInicio() {
@@ -274,17 +192,23 @@ function renderParticipantes() {
     lista.innerHTML = "";
 
     if (!participantes.length) {
-        lista.innerHTML = '<p>Nenhum participante cadastrado ainda.</p>';
+        lista.innerHTML = "<p>Nenhum participante cadastrado ainda.</p>";
         return;
     }
 
     participantes.forEach((participante) => {
         const card = document.createElement("div");
+        const nome = document.createElement("span");
+        const remover = document.createElement("button");
+
         card.className = "participante";
-        card.innerHTML = `
-            <span onclick="abrirPerfil(${participante.id})">${participante.nome}</span>
-            <button onclick="removerParticipante(${participante.id})">Remover</button>
-        `;
+        nome.textContent = participante.nome;
+        nome.addEventListener("click", () => abrirPerfil(participante.id));
+        remover.type = "button";
+        remover.textContent = "Remover";
+        remover.addEventListener("click", () => removerParticipante(participante.id));
+
+        card.append(nome, remover);
         lista.appendChild(card);
     });
 }
@@ -301,6 +225,7 @@ function abrirPerfil(id) {
         return;
     }
 
+    participanteAtual.palpites = normalizarPalpites(participanteAtual.palpites || {});
     document.getElementById("inicio").classList.add("hidden");
     document.getElementById("perfil").classList.remove("hidden");
     document.getElementById("resultados").classList.add("hidden");
@@ -323,22 +248,26 @@ function renderPerfil() {
     roundKeys.forEach((roundKey) => {
         const matches = gerarChaveamento(roundKey, participanteAtual.palpites);
         const bloco = document.createElement("div");
-        bloco.className = "jogo";
-        bloco.innerHTML = `<h3>${roundTitles[roundKey]}</h3>`;
+        const titulo = document.createElement("h3");
+        const label = document.createElement("div");
 
-        if (roundKey === "final") {
-            bloco.innerHTML += `<div class="match-label">Escolha o campeão</div>`;
-        } else {
-            bloco.innerHTML += `<div class="match-label">Escolha os vencedores</div>`;
-        }
+        bloco.className = "jogo";
+        titulo.textContent = roundTitles[roundKey];
+        label.className = "match-label";
+        label.textContent = roundKey === "final" ? "Escolha o campeao" : "Escolha os vencedores";
+        bloco.append(titulo, label);
 
         matches.forEach((match, index) => {
             const card = document.createElement("div");
+            const selecionado = roundKey === "final"
+                ? participanteAtual.palpites.campeao
+                : participanteAtual.palpites[roundKey][index];
+
             card.className = "match-row";
-            card.innerHTML = `
-                <button type="button" class="${participanteAtual.palpites[roundKey][index] === match[0] ? "selected" : ""}" onclick="selecionarPalpite('${roundKey}', ${index}, '${match[0]}')">${match[0]}</button>
-                <button type="button" class="${participanteAtual.palpites[roundKey][index] === match[1] ? "selected" : ""}" onclick="selecionarPalpite('${roundKey}', ${index}, '${match[1]}')">${match[1]}</button>
-            `;
+            card.append(
+                criarBotaoTime(match[0], selecionado === match[0], () => selecionarPalpite(roundKey, index, match[0])),
+                criarBotaoTime(match[1], selecionado === match[1], () => selecionarPalpite(roundKey, index, match[1]))
+            );
             bloco.appendChild(card);
         });
 
@@ -346,15 +275,16 @@ function renderPerfil() {
     });
 
     const campeaoPreview = document.getElementById("campeaoPreview");
-    campeaoPreview.textContent = `Campeão: ${participanteAtual.palpites.campeao || "ainda não definido"}`;
+    campeaoPreview.textContent = `Campeao: ${participanteAtual.palpites.campeao || "ainda nao definido"}`;
 }
 
 function selecionarPalpite(roundKey, index, teamName) {
-    if (!participanteAtual) {
+    if (!participanteAtual || teamName === "A definir") {
         return;
     }
 
     if (roundKey === "final") {
+        participanteAtual.palpites.final[index] = teamName;
         participanteAtual.palpites.campeao = teamName;
     } else {
         participanteAtual.palpites[roundKey][index] = teamName;
@@ -396,16 +326,19 @@ function renderResultados() {
     roundKeys.forEach((roundKey) => {
         const matches = gerarChaveamento(roundKey, officialResults);
         const bloco = document.createElement("div");
+        const titulo = document.createElement("h3");
+
         bloco.className = "jogo";
-        bloco.innerHTML = `<h3>${roundTitles[roundKey]}</h3>`;
+        titulo.textContent = roundTitles[roundKey];
+        bloco.appendChild(titulo);
 
         matches.forEach((match, index) => {
             const card = document.createElement("div");
             card.className = "match-row";
-            card.innerHTML = `
-                <button type="button" class="${officialResults[roundKey][index] === match[0] ? "selected" : ""}" onclick="registrarResultado('${roundKey}', ${index}, '${match[0]}')">${match[0]}</button>
-                <button type="button" class="${officialResults[roundKey][index] === match[1] ? "selected" : ""}" onclick="registrarResultado('${roundKey}', ${index}, '${match[1]}')">${match[1]}</button>
-            `;
+            card.append(
+                criarBotaoTime(match[0], officialResults[roundKey][index] === match[0], () => registrarResultado(roundKey, index, match[0])),
+                criarBotaoTime(match[1], officialResults[roundKey][index] === match[1], () => registrarResultado(roundKey, index, match[1]))
+            );
             bloco.appendChild(card);
         });
 
@@ -414,28 +347,25 @@ function renderResultados() {
 
     const campeao = document.createElement("div");
     campeao.className = "champion-row";
-    campeao.innerHTML = `
-        <div class="result-badge">Campeão oficial: ${officialResults.campeao || "ainda não definido"}</div>
-        <div class="match-row">
-            <button type="button" onclick="registrarCampeao('Brasil')">Brasil</button>
-            <button type="button" onclick="registrarCampeao('Argentina')">Argentina</button>
-        </div>
-    `;
+    campeao.innerHTML = `<div class="result-badge">Campeao oficial: ${officialResults.campeao || "ainda nao definido"}</div>`;
     container.appendChild(campeao);
 }
 
 function registrarResultado(roundKey, index, teamName) {
+    if (teamName === "A definir") {
+        return;
+    }
+
     if (!officialResults[roundKey]) {
         officialResults[roundKey] = [];
     }
 
     officialResults[roundKey][index] = teamName;
-    salvarResultados();
-    renderResultados();
-}
 
-function registrarCampeao(teamName) {
-    officialResults.campeao = teamName;
+    if (roundKey === "final") {
+        officialResults.campeao = teamName;
+    }
+
     salvarResultados();
     renderResultados();
 }
@@ -443,22 +373,22 @@ function registrarCampeao(teamName) {
 function calcularPontuacao() {
     const participantesComPontos = participantes.map((participante) => {
         let pontos = 0;
+        const palpites = normalizarPalpites(participante.palpites || {});
 
         roundKeys.forEach((roundKey) => {
-            const palpites = participante.palpites[roundKey] || [];
             const resultados = officialResults[roundKey] || [];
-            palpites.forEach((palpite, index) => {
+            palpites[roundKey].forEach((palpite, index) => {
                 if (palpite && resultados[index] && palpite === resultados[index]) {
                     pontos += 1;
                 }
             });
         });
 
-        if (participante.palpites.campeao && officialResults.campeao && participante.palpites.campeao === officialResults.campeao) {
+        if (palpites.campeao && officialResults.campeao && palpites.campeao === officialResults.campeao) {
             pontos += 5;
         }
 
-        return { ...participante, pontos };
+        return { ...participante, palpites, pontos };
     });
 
     participantes = participantesComPontos.sort((a, b) => b.pontos - a.pontos || a.nome.localeCompare(b.nome));
@@ -472,33 +402,57 @@ function renderRanking() {
     lista.innerHTML = "";
 
     if (!participantes.length) {
-        lista.innerHTML = '<p>Nenhum participante para rankear.</p>';
+        lista.innerHTML = "<p>Nenhum participante para rankear.</p>";
         return;
     }
 
     participantes.forEach((participante, index) => {
         const item = document.createElement("div");
+        const left = document.createElement("div");
+        const foto = participante.foto ? document.createElement("img") : document.createElement("div");
+        const texto = document.createElement("div");
+        const nome = document.createElement("strong");
+        const pontos = document.createElement("div");
+        const total = document.createElement("div");
+
         item.className = "ranking-item";
-        item.innerHTML = `
-            <div class="ranking-left">
-                ${participante.foto ? `<img class="ranking-foto" src="${participante.foto}" alt="${participante.nome}">` : "<div class=\"ranking-foto\"></div>"}
-                <div>
-                    <strong>#${index + 1} ${participante.nome}</strong>
-                    <div>${participante.pontos ?? 0} pontos</div>
-                </div>
-            </div>
-            <div>${participante.pontos ?? 0}</div>
-        `;
+        left.className = "ranking-left";
+        foto.className = "ranking-foto";
+
+        if (participante.foto) {
+            foto.src = participante.foto;
+            foto.alt = participante.nome;
+        }
+
+        nome.textContent = `#${index + 1} ${participante.nome}`;
+        pontos.textContent = `${participante.pontos || 0} pontos`;
+        total.textContent = participante.pontos || 0;
+
+        texto.append(nome, pontos);
+        left.append(foto, texto);
+        item.append(left, total);
         lista.appendChild(item);
     });
 }
 
 function inicializar() {
+    salvarParticipantes();
+    salvarResultados();
     renderParticipantes();
     renderResultados();
     renderRanking();
     mostrarInicio();
 }
 
+window.mostrarInicio = mostrarInicio;
+window.abrirResultados = abrirResultados;
+window.abrirRanking = abrirRanking;
+window.voltar = voltar;
+window.adicionarParticipante = adicionarParticipante;
+window.removerParticipante = removerParticipante;
+window.abrirPerfil = abrirPerfil;
+window.salvarFoto = salvarFoto;
+window.salvarPalpites = salvarPalpites;
+window.calcularPontuacao = calcularPontuacao;
+
 window.addEventListener("DOMContentLoaded", inicializar);
-Use Control + Shift + mpara alternar o tabfoco da tecla. Como alternativa, use escpara tabmover para o próximo elemento interativo na página.
