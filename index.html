@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bolão Copa 2026</title>
-    <link rel="stylesheet" href="estilo.css">
+    <link rel="stylesheet" href="estilo.css?v=2">
 </head>
 
 <body>
@@ -35,8 +35,6 @@
         </section>
 
         <section id="perfil" class="hidden">
-            <button class="voltar" onclick="voltar()">⬅ Voltar</button>
-
             <div class="card">
                 <h2 id="tituloParticipante">Participante</h2>
                 <hr>
@@ -50,26 +48,25 @@
                 <div id="listaJogos"></div>
                 <div id="campeaoPreview" class="result-badge">Campeão: ainda não definido</div>
                 <button class="salvar" onclick="salvarPalpites()">💾 Salvar chaveamento</button>
+                <button class="voltar" onclick="voltar()">⬅ Voltar</button>
             </div>
         </section>
 
         <section id="resultados" class="hidden">
-            <button class="voltar" onclick="mostrarInicio()">⬅ Voltar</button>
-
             <div class="card">
                 <h2>Resultados Oficiais</h2>
                 <p>Cadastre apenas os vencedores dos jogos reais. Depois clique em salvar e o ranking será atualizado.</p>
                 <div id="listaResultados"></div>
                 <button class="salvar" onclick="calcularPontuacao()">🏆 Salvar resultados e atualizar ranking</button>
+                <button class="voltar" onclick="mostrarInicio()">⬅ Voltar</button>
             </div>
         </section>
 
         <section id="ranking" class="hidden">
-            <button class="voltar" onclick="mostrarInicio()">⬅ Voltar</button>
-
             <div class="card">
                 <h2>Ranking</h2>
                 <div id="listaRanking"></div>
+                <button class="voltar" onclick="mostrarInicio()">⬅ Voltar</button>
             </div>
         </section>
     </main>
@@ -91,7 +88,7 @@
         </button>
     </nav>
 
-    <script src="script.js"></script>
+    <script src="script.js?v=2"></script>
 </body>
 
 </html>
