@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bolão Copa 2026</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="estilo.css">
 </head>
 
 <body>
@@ -36,6 +36,7 @@
 
         <section id="perfil" class="hidden">
             <button class="voltar" onclick="voltar()">⬅ Voltar</button>
+
             <div class="card">
                 <h2 id="tituloParticipante">Participante</h2>
                 <hr>
@@ -54,6 +55,7 @@
 
         <section id="resultados" class="hidden">
             <button class="voltar" onclick="mostrarInicio()">⬅ Voltar</button>
+
             <div class="card">
                 <h2>Resultados Oficiais</h2>
                 <p>Cadastre apenas os vencedores dos jogos reais. Depois clique em salvar e o ranking será atualizado.</p>
@@ -64,12 +66,12 @@
 
         <section id="ranking" class="hidden">
             <button class="voltar" onclick="mostrarInicio()">⬅ Voltar</button>
+
             <div class="card">
                 <h2>Ranking</h2>
                 <div id="listaRanking"></div>
             </div>
         </section>
-
     </main>
 
     <nav class="menu">
@@ -77,10 +79,12 @@
             <div class="menu-icon">🏠</div>
             <span>Início</span>
         </button>
+
         <button onclick="abrirResultados()">
             <div class="menu-icon">⚽</div>
             <span>Resultados</span>
         </button>
+
         <button onclick="abrirRanking()">
             <div class="menu-icon">🏆</div>
             <span>Ranking</span>
@@ -91,4 +95,3 @@
 </body>
 
 </html>
-
