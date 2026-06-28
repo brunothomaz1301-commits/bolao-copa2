@@ -1,3 +1,106 @@
+Ir para o conteúdo
+brunothomaz1301-commits
+bolao-copa2
+Navegação do repositório
+Código
+Problemas
+Solicitações de pull
+Agentes
+Ações
+Projetos
+Wiki
+Segurança e qualidade
+Percepções
+Configurações
+Arquivos
+Acesse o arquivo
+t
+T
+.github
+index.html
+script.js
+estilo.css
+bolao-copa2
+/
+script.js
+em
+principal
+
+Editar
+
+Pré-visualização
+Modo de recuo
+
+Espaços
+Tamanho do recuo
+
+4
+modo de quebra de linha
+
+Sem embrulho
+Editando o conteúdo do arquivo script.js
+  1
+  2
+  3
+  4
+  5
+  6
+  7
+  8
+  9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
 // =======================================
 // BOLÃO COPA 2026
 // =======================================
@@ -61,119 +164,8 @@ let officialResults = JSON.parse(localStorage.getItem("resultados")) || {
     final: [],
     campeao: ""
 };
+
 let participanteAtual = null;
-
-function garantirComprimento(arr, length) {
-    const resultado = Array.isArray(arr) ? [...arr] : [];
-    while (resultado.length < length) {
-        resultado.push("");
-    }
-    return resultado.slice(0, length);
-}
-
-function normalizarChaveamento(chaveamento = {}) {
-    return {
-        dezesseisAvos: garantirComprimento(chaveamento.dezesseisAvos, matchCounts.dezesseisAvos),
-        oitavas: garantirComprimento(chaveamento.oitavas, matchCounts.oitavas),
-        quartas: garantirComprimento(chaveamento.quartas, matchCounts.quartas),
-        semifinal: garantirComprimento(chaveamento.semifinal, matchCounts.semifinal),
-        final: garantirComprimento(chaveamento.final, matchCounts.final),
-        campeao: chaveamento.campeao || ""
-    };
-}
-
-function setBracketTeam(bracketData, roundKey, index, team) {
-    bracketData[roundKey] = garantirComprimento(bracketData[roundKey], index + 1);
-    bracketData[roundKey][index] = team;
-}
-
-function getNextSlot(roundKey, matchIndex) {
-    const nextRound = roundNext[roundKey];
-    if (!nextRound) return null;
-
-    // Cada vencedor permanece na mesma posição de partida para o próximo round.
-    // O par correto é montado em gerarMatches(), que depois agrupa 0/1, 2/3, etc.
-    return { nextRound, nextIndex: matchIndex };
-}
-
-const defaultBruno = {
-    nome: "Bruno",
-    foto: null,
-    pontos: 0,
-    chaveamento: {
-        dezesseisAvos: [
-            "Alemanha", "França", "África do Sul", "Países Baixos",
-            "Brasil", "Noruega", "México", "Inglaterra",
-            "Portugal", "Espanha", "Estados Unidos", "Bélgica",
-            "Argentina", "Austrália", "Suíça", "Colômbia"
-        ],
-        oitavas: ["França", "Espanha", "Inglaterra", "Argentina", "Brasil", "Países Baixos", "Suíça", "México"],
-        quartas: ["França", "Espanha", "Inglaterra", "Argentina"],
-        semifinal: ["França", "Inglaterra"],
-        final: ["França"],
-        campeao: "França"
-    }
-};
-
-function normalizarParticipantes() {
-    participantes = participantes.map(p => ({
-        ...p,
-        chaveamento: normalizarChaveamento(p.chaveamento)
-    }));
-}
-
-function normalizarResultados() {
-    officialResults = normalizarChaveamento(officialResults);
-}
-
-function atualizarBrunoExemplo() {
-    participantes = participantes.map(p => {
-        if (p.nome === "Bruno" || p.nome === "Exemplo GE") {
-            return {
-                ...p,
-                chaveamento: JSON.parse(JSON.stringify(defaultBruno.chaveamento))
-            };
-        }
-        return p;
-    });
-}
-
-function inserirBrunoSeAusente() {
-    const bruno = participantes.find(p => p.nome === "Bruno");
-    if (!bruno) {
-        participantes.unshift(defaultBruno);
-        salvarParticipantes();
-        return;
-    }
-
-    if (!bruno.chaveamento || !bruno.chaveamento.dezesseisAvos.length) {
-        bruno.chaveamento = JSON.parse(JSON.stringify(defaultBruno.chaveamento));
-        salvarParticipantes();
-    }
-}
-
-function carregarExemploGE() {
-    const exemplo = JSON.parse(JSON.stringify(defaultBruno));
-    exemplo.nome = "Exemplo GE";
-    const idx = participantes.findIndex(p => p.nome === "Exemplo GE");
-    if (idx >= 0) {
-        participantes[idx] = exemplo;
-    } else {
-        participantes.unshift(exemplo);
-    }
-    normalizarParticipantes();
-    salvarParticipantes();
-    mostrarParticipantes();
-    abrirParticipante(0);
-}
-
-window.onload = () => {
-    normalizarParticipantes();
-    normalizarResultados();
-    atualizarBrunoExemplo();
-    inserirBrunoSeAusente();
-    mostrarParticipantes();
-};
 
 function salvarParticipantes() {
     localStorage.setItem("participantes", JSON.stringify(participantes));
@@ -183,123 +175,42 @@ function salvarResultados() {
     localStorage.setItem("resultados", JSON.stringify(officialResults));
 }
 
-function adicionarParticipante() {
-    const nome = document.getElementById("nome").value.trim();
-    if (!nome) {
-        alert("Digite o nome do participante.");
-        return;
-    }
-
-    participantes.push({
-        nome,
-        foto: null,
-        pontos: 0,
-        chaveamento: {
-            dezesseisAvos: [],
-            oitavas: [],
-            quartas: [],
-            semifinal: [],
-            final: [],
-            campeao: ""
-        }
-    });
-
-    salvarParticipantes();
-    mostrarParticipantes();
-    document.getElementById("nome").value = "";
-}
-
-function mostrarParticipantes() {
-    const lista = document.getElementById("listaParticipantes");
-    lista.innerHTML = "";
-
-    participantes.forEach((p, index) => {
-        lista.innerHTML += `
-            <div class="participante">
-                <span onclick="abrirParticipante(${index})">👤 ${p.nome} <small>${p.pontos || 0} pts</small></span>
-                <button onclick="excluirParticipante(${index})">Excluir</button>
-            </div>
-        `;
-    });
-}
-
-function excluirParticipante(index) {
-    if (confirm("Excluir participante?")) {
-        participantes.splice(index, 1);
-        salvarParticipantes();
-        mostrarParticipantes();
-    }
-}
-
-function abrirParticipante(index) {
-    participanteAtual = index;
-    mostrarSecao("perfil");
-    document.getElementById("tituloParticipante").textContent = participantes[index].nome;
-    carregarFoto();
-    desenharChaveamento();
-    atualizarCampeaoPreview();
-}
-
-function voltar() {
-    mostrarSecao("inicio");
-}
-
-function mostrarInicio() {
-    mostrarSecao("inicio");
-}
-
-function mostrarSecao(id) {
-    ["inicio", "perfil", "resultados", "ranking"].forEach(sec => {
-        const el = document.getElementById(sec);
-        if (el) el.classList.toggle("hidden", sec !== id);
-    });
-}
-
-function salvarFoto(event) {
-    const arquivo = event.target.files[0];
-    if (!arquivo) return;
-
-    const leitor = new FileReader();
-    leitor.onload = function (e) {
-        participantes[participanteAtual].foto = e.target.result;
-        salvarParticipantes();
-        carregarFoto();
+function criarEstruturaPalpites() {
+    return {
+        dezesseisAvos: Array(matchCounts.dezesseisAvos).fill(null),
+        oitavas: Array(matchCounts.oitavas).fill(null),
+        quartas: Array(matchCounts.quartas).fill(null),
+        semifinal: Array(matchCounts.semifinal).fill(null),
+        final: Array(matchCounts.final).fill(null),
+        campeao: ""
     };
-    leitor.readAsDataURL(arquivo);
 }
 
-function carregarFoto() {
-    const foto = document.getElementById("fotoParticipante");
-    if (participantes[participanteAtual]?.foto) {
-        foto.src = participantes[participanteAtual].foto;
-        foto.hidden = false;
-    } else {
-        foto.hidden = true;
-    }
-}
-
-function limparRodadasPosteriores(bracketData, roundKey) {
-    const index = roundKeys.indexOf(roundKey);
-    if (index < 0) return;
-
-    for (let i = index + 1; i < roundKeys.length; i += 1) {
-        bracketData[roundKeys[i]] = [];
-    }
-
-    bracketData.campeao = "";
-}
-
-function gerarMatches(roundKey, bracketData) {
+function gerarChaveamento(roundKey, source) {
     if (roundKey === "dezesseisAvos") {
-        return staticMatches;
+        return staticMatches.map((match) => [...match]);
     }
 
-    const prevKey = roundPrev[roundKey];
-    const prevWinners = bracketData[prevKey] || [];
+    const prevRound = roundPrev[roundKey];
+    const prevWinners = source[prevRound] || [];
+    const count = matchCounts[roundKey];
     const matches = [];
-    const count = matchCounts[roundKey] || 0;
 
-    for (let i = 0; i < count; i += 1) {
+    if (roundKey === "semifinal") {
+        matches.push([
+            prevWinners[0] || "A definir",
+            prevWinners[2] || "A definir"
+        ]);
+
+        matches.push([
+            prevWinners[1] || "A definir",
+            prevWinners[3] || "A definir"
+        ]);
+
+        return matches;
+    }
+
+    for (let i = 0; i < count; i++) {
         const a = prevWinners[i * 2] || "A definir";
         const b = prevWinners[i * 2 + 1] || "A definir";
         matches.push([a, b]);
@@ -308,167 +219,286 @@ function gerarMatches(roundKey, bracketData) {
     return matches;
 }
 
-function desenharChaveamento() {
-    const div = document.getElementById("listaJogos");
-    div.innerHTML = "";
-    const participante = participantes[participanteAtual];
-
-    roundKeys.forEach(roundKey => {
-        const titulo = roundTitles[roundKey];
-        const matches = gerarMatches(roundKey, participante.chaveamento);
-        div.innerHTML += `<div class="section-title"><h3>${titulo}</h3></div>`;
-
-        matches.forEach((match, matchIndex) => {
-            const escolhido = participante.chaveamento[roundKey][matchIndex] || "";
-            div.innerHTML += `
-                <div class="jogo">
-                    <h3>${titulo} - Jogo ${matchIndex + 1}</h3>
-                    <div class="match-label">${match[0]} x ${match[1]}</div>
-                    <div class="match-row">
-                        <button class="${escolhido === match[0] ? "selected" : ""}" onclick="escolherTime('${roundKey}', ${matchIndex}, '${match[0]}')" ${match[0] === 'A definir' ? 'disabled' : ''}>${match[0]}</button>
-                        <button class="${escolhido === match[1] ? "selected" : ""}" onclick="escolherTime('${roundKey}', ${matchIndex}, '${match[1]}')" ${match[1] === 'A definir' ? 'disabled' : ''}>${match[1]}</button>
-                    </div>
-                </div>
-            `;
-        });
-    });
-}
-
-function escolherTime(roundKey, matchIndex, team) {
-    const participante = participantes[participanteAtual];
-    limparRodadasPosteriores(participante.chaveamento, roundKey);
-    setBracketTeam(participante.chaveamento, roundKey, matchIndex, team);
-
-    const nextSlot = getNextSlot(roundKey, matchIndex);
-    if (nextSlot) {
-        setBracketTeam(participante.chaveamento, nextSlot.nextRound, nextSlot.nextIndex, team);
-    }
-
-    if (roundKey === "final") {
-        participante.chaveamento.campeao = team;
-    }
-    salvarParticipantes();
-    desenharChaveamento();
-    atualizarCampeaoPreview();
-}
-
-function salvarPalpites() {
-    salvarParticipantes();
-    atualizarCampeaoPreview();
-    alert("Chaveamento salvo com sucesso.");
+function mostrarInicio() {
+    document.getElementById("inicio").classList.remove("hidden");
+    document.getElementById("perfil").classList.add("hidden");
+    document.getElementById("resultados").classList.add("hidden");
+    document.getElementById("ranking").classList.add("hidden");
 }
 
 function abrirResultados() {
-    mostrarSecao("resultados");
-    desenharResultados();
-}
-
-function desenharResultados() {
-    const div = document.getElementById("listaResultados");
-    div.innerHTML = "";
-
-    roundKeys.forEach(roundKey => {
-        const titulo = roundTitles[roundKey];
-        const matches = gerarMatches(roundKey, officialResults);
-        div.innerHTML += `<div class="section-title"><h3>${titulo}</h3></div>`;
-
-        matches.forEach((match, matchIndex) => {
-            const escolhido = officialResults[roundKey][matchIndex] || "";
-            div.innerHTML += `
-                <div class="jogo">
-                    <h3>${titulo} - Jogo ${matchIndex + 1}</h3>
-                    <div class="match-label">${match[0]} x ${match[1]}</div>
-                    <div class="match-row">
-                        <button class="${escolhido === match[0] ? "selected" : ""}" onclick="escolherResultado('${roundKey}', ${matchIndex}, '${match[0]}')" ${match[0] === 'A definir' ? 'disabled' : ''}>${match[0]}</button>
-                        <button class="${escolhido === match[1] ? "selected" : ""}" onclick="escolherResultado('${roundKey}', ${matchIndex}, '${match[1]}')" ${match[1] === 'A definir' ? 'disabled' : ''}>${match[1]}</button>
-                    </div>
-                </div>
-            `;
-        });
-    });
-}
-
-function escolherResultado(roundKey, matchIndex, team) {
-    limparRodadasPosteriores(officialResults, roundKey);
-    officialResults[roundKey][matchIndex] = team;
-    if (roundKey === "final") {
-        officialResults.campeao = team;
-    }
-    salvarResultados();
-    desenharResultados();
-}
-
-function calcularPontuacao() {
-    participantes.forEach(participante => {
-        participante.pontos = calcularPontos(participante);
-    });
-    salvarParticipantes();
-    mostrarRanking();
-    alert("Pontuação atualizada.");
-}
-
-function calcularPontos(participante) {
-    let pontos = 0;
-
-    roundKeys.forEach(roundKey => {
-        const oficialMatches = gerarMatches(roundKey, officialResults);
-        const participantMatches = gerarMatches(roundKey, participante.chaveamento);
-
-        oficialMatches.forEach((officialMatch, index) => {
-            const participantPick = participante.chaveamento[roundKey][index];
-            const officialWinner = officialResults[roundKey][index];
-            const participantMatch = participantMatches[index];
-            if (!participantPick || !officialWinner || !participantMatch || !officialMatch) return;
-
-            if (mesmoConfronto(participantMatch, officialMatch) && participantPick === officialWinner) {
-                pontos++;
-            }
-        });
-    });
-
-    if (participante.chaveamento.campeao && officialResults.campeao && participante.chaveamento.campeao === officialResults.campeao) {
-        pontos++;
-    }
-
-    return pontos;
-}
-
-function mesmoConfronto(matchA, matchB) {
-    if (!matchA || !matchB) return false;
-    return (matchA[0] === matchB[0] && matchA[1] === matchB[1]) || (matchA[0] === matchB[1] && matchA[1] === matchB[0]);
-}
-
-function mostrarRanking() {
-    const div = document.getElementById("listaRanking");
-    div.innerHTML = "";
-    const ordenados = [...participantes].sort((a, b) => (b.pontos || 0) - (a.pontos || 0));
-
-    ordenados.forEach((p, index) => {
-        const medalha = index === 0 ? "🥇" : index === 1 ? "🥈" : index === 2 ? "🥉" : "";
-        div.innerHTML += `
-            <div class="ranking-item">
-                <div class="ranking-left">
-                    <img class="ranking-foto" src="${p.foto || ""}" ${p.foto ? "" : "hidden"} alt="${p.nome}">
-                    <span>${medalha} ${p.nome}</span>
-                </div>
-                <strong>${p.pontos || 0} pts</strong>
-            </div>
-        `;
-    });
+    document.getElementById("inicio").classList.add("hidden");
+    document.getElementById("perfil").classList.add("hidden");
+    document.getElementById("resultados").classList.remove("hidden");
+    document.getElementById("ranking").classList.add("hidden");
+    renderResultados();
 }
 
 function abrirRanking() {
-    mostrarSecao("ranking");
-    mostrarRanking();
+    document.getElementById("inicio").classList.add("hidden");
+    document.getElementById("perfil").classList.add("hidden");
+    document.getElementById("resultados").classList.add("hidden");
+    document.getElementById("ranking").classList.remove("hidden");
+    renderRanking();
 }
 
-function atualizarCampeaoPreview() {
-    const preview = document.getElementById("campeaoPreview");
-    if (!preview || participanteAtual === null) return;
-    const participante = participantes[participanteAtual];
-    if (participante && participante.chaveamento && participante.chaveamento.campeao) {
-        preview.textContent = `Campeão: ${participante.chaveamento.campeao}`;
-    } else {
-        preview.textContent = "Campeão: ainda não definido";
-    }
+function voltar() {
+    participanteAtual = null;
+    mostrarInicio();
 }
+
+function adicionarParticipante() {
+    const inputNome = document.getElementById("nome");
+    const nome = inputNome.value.trim();
+
+    if (!nome) {
+        alert("Digite um nome para o participante.");
+        return;
+    }
+
+    const novoParticipante = {
+        id: Date.now(),
+        nome,
+        foto: "",
+        palpites: criarEstruturaPalpites()
+    };
+
+    participantes.push(novoParticipante);
+    salvarParticipantes();
+    inputNome.value = "";
+    renderParticipantes();
+}
+
+function renderParticipantes() {
+    const lista = document.getElementById("listaParticipantes");
+    lista.innerHTML = "";
+
+    if (!participantes.length) {
+        lista.innerHTML = '<p>Nenhum participante cadastrado ainda.</p>';
+        return;
+    }
+
+    participantes.forEach((participante) => {
+        const card = document.createElement("div");
+        card.className = "participante";
+        card.innerHTML = `
+            <span onclick="abrirPerfil(${participante.id})">${participante.nome}</span>
+            <button onclick="removerParticipante(${participante.id})">Remover</button>
+        `;
+        lista.appendChild(card);
+    });
+}
+
+function removerParticipante(id) {
+    participantes = participantes.filter((participante) => participante.id !== id);
+    salvarParticipantes();
+    renderParticipantes();
+}
+
+function abrirPerfil(id) {
+    participanteAtual = participantes.find((participante) => participante.id === id);
+    if (!participanteAtual) {
+        return;
+    }
+
+    document.getElementById("inicio").classList.add("hidden");
+    document.getElementById("perfil").classList.remove("hidden");
+    document.getElementById("resultados").classList.add("hidden");
+    document.getElementById("ranking").classList.add("hidden");
+    renderPerfil();
+}
+
+function renderPerfil() {
+    if (!participanteAtual) {
+        return;
+    }
+
+    document.getElementById("tituloParticipante").textContent = participanteAtual.nome;
+    document.getElementById("fotoParticipante").hidden = !participanteAtual.foto;
+    document.getElementById("fotoParticipante").src = participanteAtual.foto || "";
+
+    const container = document.getElementById("listaJogos");
+    container.innerHTML = "";
+
+    roundKeys.forEach((roundKey) => {
+        const matches = gerarChaveamento(roundKey, participanteAtual.palpites);
+        const bloco = document.createElement("div");
+        bloco.className = "jogo";
+        bloco.innerHTML = `<h3>${roundTitles[roundKey]}</h3>`;
+
+        if (roundKey === "final") {
+            bloco.innerHTML += `<div class="match-label">Escolha o campeão</div>`;
+        } else {
+            bloco.innerHTML += `<div class="match-label">Escolha os vencedores</div>`;
+        }
+
+        matches.forEach((match, index) => {
+            const card = document.createElement("div");
+            card.className = "match-row";
+            card.innerHTML = `
+                <button type="button" class="${participanteAtual.palpites[roundKey][index] === match[0] ? "selected" : ""}" onclick="selecionarPalpite('${roundKey}', ${index}, '${match[0]}')">${match[0]}</button>
+                <button type="button" class="${participanteAtual.palpites[roundKey][index] === match[1] ? "selected" : ""}" onclick="selecionarPalpite('${roundKey}', ${index}, '${match[1]}')">${match[1]}</button>
+            `;
+            bloco.appendChild(card);
+        });
+
+        container.appendChild(bloco);
+    });
+
+    const campeaoPreview = document.getElementById("campeaoPreview");
+    campeaoPreview.textContent = `Campeão: ${participanteAtual.palpites.campeao || "ainda não definido"}`;
+}
+
+function selecionarPalpite(roundKey, index, teamName) {
+    if (!participanteAtual) {
+        return;
+    }
+
+    if (roundKey === "final") {
+        participanteAtual.palpites.campeao = teamName;
+    } else {
+        participanteAtual.palpites[roundKey][index] = teamName;
+    }
+
+    salvarParticipantes();
+    renderPerfil();
+}
+
+function salvarFoto(event) {
+    const arquivo = event.target.files[0];
+    if (!arquivo || !participanteAtual) {
+        return;
+    }
+
+    const leitor = new FileReader();
+    leitor.onload = function () {
+        participanteAtual.foto = leitor.result;
+        salvarParticipantes();
+        renderPerfil();
+    };
+    leitor.readAsDataURL(arquivo);
+}
+
+function salvarPalpites() {
+    if (!participanteAtual) {
+        alert("Selecione um participante primeiro.");
+        return;
+    }
+
+    salvarParticipantes();
+    alert("Chaveamento salvo com sucesso!");
+}
+
+function renderResultados() {
+    const container = document.getElementById("listaResultados");
+    container.innerHTML = "";
+
+    roundKeys.forEach((roundKey) => {
+        const matches = gerarChaveamento(roundKey, officialResults);
+        const bloco = document.createElement("div");
+        bloco.className = "jogo";
+        bloco.innerHTML = `<h3>${roundTitles[roundKey]}</h3>`;
+
+        matches.forEach((match, index) => {
+            const card = document.createElement("div");
+            card.className = "match-row";
+            card.innerHTML = `
+                <button type="button" class="${officialResults[roundKey][index] === match[0] ? "selected" : ""}" onclick="registrarResultado('${roundKey}', ${index}, '${match[0]}')">${match[0]}</button>
+                <button type="button" class="${officialResults[roundKey][index] === match[1] ? "selected" : ""}" onclick="registrarResultado('${roundKey}', ${index}, '${match[1]}')">${match[1]}</button>
+            `;
+            bloco.appendChild(card);
+        });
+
+        container.appendChild(bloco);
+    });
+
+    const campeao = document.createElement("div");
+    campeao.className = "champion-row";
+    campeao.innerHTML = `
+        <div class="result-badge">Campeão oficial: ${officialResults.campeao || "ainda não definido"}</div>
+        <div class="match-row">
+            <button type="button" onclick="registrarCampeao('Brasil')">Brasil</button>
+            <button type="button" onclick="registrarCampeao('Argentina')">Argentina</button>
+        </div>
+    `;
+    container.appendChild(campeao);
+}
+
+function registrarResultado(roundKey, index, teamName) {
+    if (!officialResults[roundKey]) {
+        officialResults[roundKey] = [];
+    }
+
+    officialResults[roundKey][index] = teamName;
+    salvarResultados();
+    renderResultados();
+}
+
+function registrarCampeao(teamName) {
+    officialResults.campeao = teamName;
+    salvarResultados();
+    renderResultados();
+}
+
+function calcularPontuacao() {
+    const participantesComPontos = participantes.map((participante) => {
+        let pontos = 0;
+
+        roundKeys.forEach((roundKey) => {
+            const palpites = participante.palpites[roundKey] || [];
+            const resultados = officialResults[roundKey] || [];
+            palpites.forEach((palpite, index) => {
+                if (palpite && resultados[index] && palpite === resultados[index]) {
+                    pontos += 1;
+                }
+            });
+        });
+
+        if (participante.palpites.campeao && officialResults.campeao && participante.palpites.campeao === officialResults.campeao) {
+            pontos += 5;
+        }
+
+        return { ...participante, pontos };
+    });
+
+    participantes = participantesComPontos.sort((a, b) => b.pontos - a.pontos || a.nome.localeCompare(b.nome));
+    salvarParticipantes();
+    renderRanking();
+    alert("Ranking atualizado!");
+}
+
+function renderRanking() {
+    const lista = document.getElementById("listaRanking");
+    lista.innerHTML = "";
+
+    if (!participantes.length) {
+        lista.innerHTML = '<p>Nenhum participante para rankear.</p>';
+        return;
+    }
+
+    participantes.forEach((participante, index) => {
+        const item = document.createElement("div");
+        item.className = "ranking-item";
+        item.innerHTML = `
+            <div class="ranking-left">
+                ${participante.foto ? `<img class="ranking-foto" src="${participante.foto}" alt="${participante.nome}">` : "<div class=\"ranking-foto\"></div>"}
+                <div>
+                    <strong>#${index + 1} ${participante.nome}</strong>
+                    <div>${participante.pontos ?? 0} pontos</div>
+                </div>
+            </div>
+            <div>${participante.pontos ?? 0}</div>
+        `;
+        lista.appendChild(item);
+    });
+}
+
+function inicializar() {
+    renderParticipantes();
+    renderResultados();
+    renderRanking();
+    mostrarInicio();
+}
+
+window.addEventListener("DOMContentLoaded", inicializar);
+Use Control + Shift + mpara alternar o tabfoco da tecla. Como alternativa, use escpara tabmover para o próximo elemento interativo na página.
