@@ -91,8 +91,9 @@ function getNextSlot(roundKey, matchIndex) {
     const nextRound = roundNext[roundKey];
     if (!nextRound) return null;
 
-    const nextIndex = Math.floor(matchIndex / 2);
-    return { nextRound, nextIndex };
+    // Cada vencedor permanece na mesma posição de partida para o próximo round.
+    // O par correto é montado em gerarMatches(), que depois agrupa 0/1, 2/3, etc.
+    return { nextRound, nextIndex: matchIndex };
 }
 
 const defaultBruno = {
