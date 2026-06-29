@@ -71,21 +71,26 @@ function carregarLocalStorage(chave, valorPadrao) {
         return valorPadrao;
     }
 }
-
 function carregarParticipantes() {
     const participantesMockados = [
-        { id: 1, nome: "Bruno", foto: "./fotos/bruno.jpg", palpites: criarEstruturaPalpites() },
-        { id: 2, nome: "Enio", foto: "./fotos/enio.jpg", palpites: criarEstruturaPalpites() },
-        { id: 3, nome: "Jorginho", foto: "./fotos/jorginho.jpg", palpites: criarEstruturaPalpites() },
-        { id: 4, nome: "Rosinaldo", foto: "./fotos/rosinaldo.jpg", palpites: criarEstruturaPalpites() },
-        { id: 5, nome: "Jocelmo", foto: "./fotos/jocelmo.jpg", palpites: criarEstruturaPalpites() },
-        { id: 6, nome: "Eduardo", foto: "./fotos/eduardo.jpg", palpites: criarEstruturaPalpites() },
-        { id: 7, nome: "Igor", foto: "./fotos/igor.jpg", palpites: criarEstruturaPalpites() },
-        { id: 8, nome: "João", foto: "./fotos/joao.jpg", palpites: criarEstruturaPalpites() },
-        { id: 9, nome: "Júnior", foto: "./fotos/junior.jpg", palpites: criarEstruturaPalpites() },
-        { id: 10, nome: "Jorge Fernandes", foto: "./fotos/jorge-fernandes.jpg", palpites: criarEstruturaPalpites() },
-        { id: 11, nome: "Diego", foto: "./fotos/diego.jpg", palpites: criarEstruturaPalpites() }
+        { id: 1, nome: "Bruno", foto: "./fotos/bruno.jpeg", palpites: criarEstruturaPalpites() },
+        { id: 2, nome: "Enio", foto: "./fotos/enio.jpeg", palpites: criarEstruturaPalpites() },
+        { id: 3, nome: "Jorginho", foto: "./fotos/jorginho.jpeg", palpites: criarEstruturaPalpites() },
+        { id: 4, nome: "Rosinaldo", foto: "./fotos/rosinaldo.jpeg", palpites: criarEstruturaPalpites() },
+        { id: 5, nome: "Jocelmo", foto: "./fotos/jocelmo.jpeg", palpites: criarEstruturaPalpites() },
+        { id: 6, nome: "Eduardo", foto: "./fotos/eduardo.jpeg", palpites: criarEstruturaPalpites() },
+        { id: 7, nome: "Igor", foto: "./fotos/igor.jpeg", palpites: criarEstruturaPalpites() },
+        { id: 8, nome: "João", foto: "./fotos/joão.jpeg", palpites: criarEstruturaPalpites() },
+        { id: 9, nome: "Júnior", foto: "./fotos/junior.jpeg", palpites: criarEstruturaPalpites() },
+        { id: 10, nome: "Jorge Fernandes", foto: "./fotos/jorge f.jpeg", palpites: criarEstruturaPalpites() },
+        { id: 11, nome: "Diego", foto: "./fotos/diego.jpeg", palpites: criarEstruturaPalpites() }
     ];
+
+    const valorSalvo = carregarLocalStorage(PARTICIPANTES_KEY, null);
+
+    return Array.isArray(valorSalvo) ? valorSalvo : participantesMockados;
+}
+
 
     const valorSalvo = carregarLocalStorage(PARTICIPANTES_KEY, null);
 
