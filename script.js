@@ -3,7 +3,18 @@
 // =======================================
 
 const PARTICIPANTES_KEY = "participantes-v2";
+// =========================
+// CONFIGURAÇÃO DA API
+// =========================
 
+// Coloque aqui sua chave da API quando criar uma conta
+const API_KEY = "";
+
+// URL da API (será usada quando a Copa começar)
+const API_URL = "";
+
+// Atualização automática a cada 5 minutos
+const TEMPO_ATUALIZACAO = 300000;
 const roundKeys = ["dezesseisAvos", "oitavas", "quartas", "semifinal", "final"];
 
 const roundTitles = {
@@ -99,7 +110,37 @@ function salvarParticipantes() {
 function salvarResultados() {
     localStorage.setItem("resultados", JSON.stringify(officialResults));
 }
+async function atualizarResultadosAutomaticamente() {
 
+    // Enquanto a API não estiver configurada,
+    // simplesmente não faz nada.
+
+    if (!API_KEY || !API_URL) {
+        return;
+    }
+
+    try {
+
+        const resposta = await fetch(API_URL, {
+            headers: {
+                "x-apisports-key": API_KEY
+            }
+        });
+
+        const dados = await resposta.json();
+
+        console.log("Resultados recebidos:", dados);
+
+        // A Etapa 2 irá preencher o officialResults
+        // automaticamente.
+
+    } catch (erro) {
+
+        console.error("Erro ao atualizar resultados:", erro);
+
+    }
+
+}
 function criarEstruturaPalpites() {
     return {
         dezesseisAvos: Array(matchCounts.dezesseisAvos).fill(null),
@@ -376,51 +417,159 @@ function renderResultados() {
 }
 
 function registrarResultado(roundKey, index, teamName) {
+
     if (teamName === "A definir") return;
 
     if (!officialResults[roundKey]) {
         officialResults[roundKey] = [];
     }
 
+    // Salva o vencedor
     officialResults[roundKey][index] = teamName;
 
+    // Se for a final, define o campeão
     if (roundKey === "final") {
         officialResults.campeao = teamName;
     }
 
+    // Salva os resultados
     salvarResultados();
+
+    // Atualiza automaticamente os confrontos da próxima fase
     renderResultados();
+
+    // Recalcula todos os participantes
+    calcularPontuacao();
+
+    // Atualiza o ranking
+    renderRanking();
 }
 
 function calcularPontuacao() {
-    const participantesComPontos = participantes.map((participante) => {
+
+    participantes.forEach(participante => {
+
         let pontos = 0;
+
         const palpites = normalizarPalpites(participante.palpites || {});
 
-        roundKeys.forEach((roundKey) => {
-            const resultados = officialResults[roundKey] || [];
+        // ==========================
+        // 16 AVOS
+        // ==========================
+        for (let i = 0; i < officialResults.dezesseisAvos.length; i++) {
 
-            palpites[roundKey].forEach((palpite, index) => {
-                if (palpite && resultados[index] && palpite === resultados[index]) {
-                    pontos += 1;
-                }
-            });
-        });
+            if (
+                officialResults.dezesseisAvos[i] &&
+                palpites.dezesseisAvos[i] === officialResults.dezesseisAvos[i]
+            ) {
+                pontos++;
+            }
 
-        if (palpites.campeao && officialResults.campeao && palpites.campeao === officialResults.campeao) {
+        }
+
+        // ==========================
+        // OITAVAS
+        // ==========================
+        for (let i = 0; i < officialResults.oitavas.length; i++) {
+
+            const jogo1 = i * 2;
+            const jogo2 = jogo1 + 1;
+
+            const caminhoCorreto =
+                palpites.dezesseisAvos[jogo1] === officialResults.dezesseisAvos[jogo1] &&
+                palpites.dezesseisAvos[jogo2] === officialResults.dezesseisAvos[jogo2];
+
+            if (
+                caminhoCorreto &&
+                officialResults.oitavas[i] &&
+                palpites.oitavas[i] === officialResults.oitavas[i]
+            ) {
+                pontos++;
+            }
+
+        }
+
+        // ==========================
+        // QUARTAS
+        // ==========================
+        for (let i = 0; i < officialResults.quartas.length; i++) {
+
+            const jogo1 = i * 2;
+            const jogo2 = jogo1 + 1;
+
+            const caminhoCorreto =
+                palpites.oitavas[jogo1] === officialResults.oitavas[jogo1] &&
+                palpites.oitavas[jogo2] === officialResults.oitavas[jogo2];
+
+            if (
+                caminhoCorreto &&
+                officialResults.quartas[i] &&
+                palpites.quartas[i] === officialResults.quartas[i]
+            ) {
+                pontos++;
+            }
+
+        }
+
+        // ==========================
+        // SEMIFINAL
+        // ==========================
+        for (let i = 0; i < officialResults.semifinal.length; i++) {
+
+            const jogo1 = i * 2;
+            const jogo2 = jogo1 + 1;
+
+            const caminhoCorreto =
+                palpites.quartas[jogo1] === officialResults.quartas[jogo1] &&
+                palpites.quartas[jogo2] === officialResults.quartas[jogo2];
+
+            if (
+                caminhoCorreto &&
+                officialResults.semifinal[i] &&
+                palpites.semifinal[i] === officialResults.semifinal[i]
+            ) {
+                pontos++;
+            }
+
+        }
+
+        // ==========================
+        // FINAL
+        // ==========================
+        const finalCorreta =
+            palpites.semifinal[0] === officialResults.semifinal[0] &&
+            palpites.semifinal[1] === officialResults.semifinal[1];
+
+        if (
+            finalCorreta &&
+            officialResults.final[0] &&
+            palpites.final[0] === officialResults.final[0]
+        ) {
+            pontos++;
+        }
+
+        // ==========================
+        // CAMPEÃO
+        // ==========================
+        if (
+            finalCorreta &&
+            officialResults.campeao &&
+            palpites.campeao === officialResults.campeao
+        ) {
             pontos += 5;
         }
 
-        return { ...participante, palpites, pontos };
+        participante.pontos = pontos;
+
     });
 
-    participantes = participantesComPontos.sort((a, b) => b.pontos - a.pontos || a.nome.localeCompare(b.nome));
+    participantes.sort((a, b) => b.pontos - a.pontos);
+
     salvarParticipantes();
+
     renderRanking();
 
-    alert("Ranking atualizado!");
 }
-
 function renderRanking() {
     const lista = document.getElementById("listaRanking");
     lista.innerHTML = "";
@@ -467,7 +616,11 @@ function inicializar() {
     renderRanking();
     mostrarInicio();
 }
+// Atualiza automaticamente
+atualizarResultadosAutomaticamente();
 
+// Atualiza a cada 5 minutos
+setInterval(atualizarResultadosAutomaticamente, TEMPO_ATUALIZACAO);
 window.mostrarInicio = mostrarInicio;
 window.abrirResultados = abrirResultados;
 window.abrirRanking = abrirRanking;
