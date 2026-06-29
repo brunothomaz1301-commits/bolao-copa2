@@ -3,6 +3,7 @@
 // =======================================
 
 const roundKeys = ["dezesseisAvos", "oitavas", "quartas", "semifinal", "final"];
+
 const roundTitles = {
     dezesseisAvos: "16 avos",
     oitavas: "Oitavas",
@@ -70,8 +71,15 @@ function carregarLocalStorage(chave, valorPadrao) {
 }
 
 function carregarParticipantes() {
-    const valorSalvo = carregarLocalStorage("participantes", []);
-    return Array.isArray(valorSalvo) ? valorSalvo : [];
+    const participantesMockados = [
+        { id: 1, nome: "Bruno", foto: "", palpites: criarEstruturaPalpites() },
+        { id: 2, nome: "Enio", foto: "", palpites: criarEstruturaPalpites() },
+        { id: 3, nome: "Junior", foto: "", palpites: criarEstruturaPalpites() }
+    ];
+
+    const valorSalvo = carregarLocalStorage("participantes", null);
+
+    return Array.isArray(valorSalvo) ? valorSalvo : participantesMockados;
 }
 
 function salvarParticipantes() {
@@ -218,6 +226,7 @@ function renderParticipantes() {
         card.className = "participante";
         nome.textContent = participante.nome;
         nome.addEventListener("click", () => abrirPerfil(participante.id));
+
         remover.type = "button";
         remover.textContent = "Remover";
         remover.addEventListener("click", () => removerParticipante(participante.id));
@@ -235,15 +244,18 @@ function removerParticipante(id) {
 
 function abrirPerfil(id) {
     participanteAtual = participantes.find((participante) => participante.id === id);
+
     if (!participanteAtual) {
         return;
     }
 
     participanteAtual.palpites = normalizarPalpites(participanteAtual.palpites || {});
+
     document.getElementById("inicio").classList.add("hidden");
     document.getElementById("perfil").classList.remove("hidden");
     document.getElementById("resultados").classList.add("hidden");
     document.getElementById("ranking").classList.add("hidden");
+
     renderPerfil();
 }
 
@@ -269,6 +281,7 @@ function renderPerfil() {
         titulo.textContent = roundTitles[roundKey];
         label.className = "match-label";
         label.textContent = roundKey === "final" ? "Escolha o campeao" : "Escolha os vencedores";
+
         bloco.append(titulo, label);
 
         matches.forEach((match, index) => {
@@ -282,6 +295,7 @@ function renderPerfil() {
                 criarBotaoTime(match[0], selecionado === match[0], () => selecionarPalpite(roundKey, index, match[0])),
                 criarBotaoTime(match[1], selecionado === match[1], () => selecionarPalpite(roundKey, index, match[1]))
             );
+
             bloco.appendChild(card);
         });
 
@@ -310,16 +324,19 @@ function selecionarPalpite(roundKey, index, teamName) {
 
 function salvarFoto(event) {
     const arquivo = event.target.files[0];
+
     if (!arquivo || !participanteAtual) {
         return;
     }
 
     const leitor = new FileReader();
+
     leitor.onload = function () {
         participanteAtual.foto = leitor.result;
         salvarParticipantes();
         renderPerfil();
     };
+
     leitor.readAsDataURL(arquivo);
 }
 
@@ -348,11 +365,13 @@ function renderResultados() {
 
         matches.forEach((match, index) => {
             const card = document.createElement("div");
+
             card.className = "match-row";
             card.append(
                 criarBotaoTime(match[0], officialResults[roundKey][index] === match[0], () => registrarResultado(roundKey, index, match[0])),
                 criarBotaoTime(match[1], officialResults[roundKey][index] === match[1], () => registrarResultado(roundKey, index, match[1]))
             );
+
             bloco.appendChild(card);
         });
 
@@ -362,6 +381,7 @@ function renderResultados() {
     const campeao = document.createElement("div");
     campeao.className = "champion-row";
     campeao.innerHTML = `<div class="result-badge">Campeao oficial: ${officialResults.campeao || "ainda nao definido"}</div>`;
+
     container.appendChild(campeao);
 }
 
@@ -391,6 +411,7 @@ function calcularPontuacao() {
 
         roundKeys.forEach((roundKey) => {
             const resultados = officialResults[roundKey] || [];
+
             palpites[roundKey].forEach((palpite, index) => {
                 if (palpite && resultados[index] && palpite === resultados[index]) {
                     pontos += 1;
@@ -406,8 +427,10 @@ function calcularPontuacao() {
     });
 
     participantes = participantesComPontos.sort((a, b) => b.pontos - a.pontos || a.nome.localeCompare(b.nome));
+
     salvarParticipantes();
     renderRanking();
+
     alert("Ranking atualizado!");
 }
 
