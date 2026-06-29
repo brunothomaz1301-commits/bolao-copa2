@@ -2,6 +2,8 @@
 // BOLAO COPA 2026
 // =======================================
 
+const PARTICIPANTES_KEY = "participantes-v2";
+
 const roundKeys = ["dezesseisAvos", "oitavas", "quartas", "semifinal", "final"];
 
 const roundTitles = {
@@ -72,18 +74,26 @@ function carregarLocalStorage(chave, valorPadrao) {
 
 function carregarParticipantes() {
     const participantesMockados = [
-        { id: 1, nome: "Bruno", foto: "", palpites: criarEstruturaPalpites() },
-        { id: 2, nome: "Enio", foto: "", palpites: criarEstruturaPalpites() },
-        { id: 3, nome: "Junior", foto: "", palpites: criarEstruturaPalpites() }
+        { id: 1, nome: "Bruno", foto: "./fotos/bruno.jpg", palpites: criarEstruturaPalpites() },
+        { id: 2, nome: "Enio", foto: "./fotos/enio.jpg", palpites: criarEstruturaPalpites() },
+        { id: 3, nome: "Jorginho", foto: "./fotos/jorginho.jpg", palpites: criarEstruturaPalpites() },
+        { id: 4, nome: "Rosinaldo", foto: "./fotos/rosinaldo.jpg", palpites: criarEstruturaPalpites() },
+        { id: 5, nome: "Jocelmo", foto: "./fotos/jocelmo.jpg", palpites: criarEstruturaPalpites() },
+        { id: 6, nome: "Eduardo", foto: "./fotos/eduardo.jpg", palpites: criarEstruturaPalpites() },
+        { id: 7, nome: "Igor", foto: "./fotos/igor.jpg", palpites: criarEstruturaPalpites() },
+        { id: 8, nome: "João", foto: "./fotos/joao.jpg", palpites: criarEstruturaPalpites() },
+        { id: 9, nome: "Júnior", foto: "./fotos/junior.jpg", palpites: criarEstruturaPalpites() },
+        { id: 10, nome: "Jorge Fernandes", foto: "./fotos/jorge-fernandes.jpg", palpites: criarEstruturaPalpites() },
+        { id: 11, nome: "Diego", foto: "./fotos/diego.jpg", palpites: criarEstruturaPalpites() }
     ];
 
-    const valorSalvo = carregarLocalStorage("participantes", null);
+    const valorSalvo = carregarLocalStorage(PARTICIPANTES_KEY, null);
 
     return Array.isArray(valorSalvo) ? valorSalvo : participantesMockados;
 }
 
 function salvarParticipantes() {
-    localStorage.setItem("participantes", JSON.stringify(participantes));
+    localStorage.setItem(PARTICIPANTES_KEY, JSON.stringify(participantes));
 }
 
 function salvarResultados() {
@@ -127,16 +137,8 @@ function gerarChaveamento(roundKey, source) {
     const matches = [];
 
     if (roundKey === "semifinal") {
-        matches.push([
-            prevWinners[0] || "A definir",
-            prevWinners[2] || "A definir"
-        ]);
-
-        matches.push([
-            prevWinners[3] || "A definir",
-            prevWinners[1] || "A definir"
-        ]);
-
+        matches.push([prevWinners[0] || "A definir", prevWinners[2] || "A definir"]);
+        matches.push([prevWinners[3] || "A definir", prevWinners[1] || "A definir"]);
         return matches;
     }
 
@@ -196,14 +198,13 @@ function adicionarParticipante() {
         return;
     }
 
-    const novoParticipante = {
+    participantes.push({
         id: Date.now(),
         nome,
         foto: "",
         palpites: criarEstruturaPalpites()
-    };
+    });
 
-    participantes.push(novoParticipante);
     salvarParticipantes();
     inputNome.value = "";
     renderParticipantes();
@@ -245,9 +246,7 @@ function removerParticipante(id) {
 function abrirPerfil(id) {
     participanteAtual = participantes.find((participante) => participante.id === id);
 
-    if (!participanteAtual) {
-        return;
-    }
+    if (!participanteAtual) return;
 
     participanteAtual.palpites = normalizarPalpites(participanteAtual.palpites || {});
 
@@ -260,9 +259,7 @@ function abrirPerfil(id) {
 }
 
 function renderPerfil() {
-    if (!participanteAtual) {
-        return;
-    }
+    if (!participanteAtual) return;
 
     document.getElementById("tituloParticipante").textContent = participanteAtual.nome;
     document.getElementById("fotoParticipante").hidden = !participanteAtual.foto;
@@ -302,14 +299,12 @@ function renderPerfil() {
         container.appendChild(bloco);
     });
 
-    const campeaoPreview = document.getElementById("campeaoPreview");
-    campeaoPreview.textContent = `Campeao: ${participanteAtual.palpites.campeao || "ainda nao definido"}`;
+    document.getElementById("campeaoPreview").textContent =
+        `Campeao: ${participanteAtual.palpites.campeao || "ainda nao definido"}`;
 }
 
 function selecionarPalpite(roundKey, index, teamName) {
-    if (!participanteAtual || teamName === "A definir") {
-        return;
-    }
+    if (!participanteAtual || teamName === "A definir") return;
 
     if (roundKey === "final") {
         participanteAtual.palpites.final[index] = teamName;
@@ -325,9 +320,7 @@ function selecionarPalpite(roundKey, index, teamName) {
 function salvarFoto(event) {
     const arquivo = event.target.files[0];
 
-    if (!arquivo || !participanteAtual) {
-        return;
-    }
+    if (!arquivo || !participanteAtual) return;
 
     const leitor = new FileReader();
 
@@ -365,13 +358,11 @@ function renderResultados() {
 
         matches.forEach((match, index) => {
             const card = document.createElement("div");
-
             card.className = "match-row";
             card.append(
                 criarBotaoTime(match[0], officialResults[roundKey][index] === match[0], () => registrarResultado(roundKey, index, match[0])),
                 criarBotaoTime(match[1], officialResults[roundKey][index] === match[1], () => registrarResultado(roundKey, index, match[1]))
             );
-
             bloco.appendChild(card);
         });
 
@@ -381,14 +372,11 @@ function renderResultados() {
     const campeao = document.createElement("div");
     campeao.className = "champion-row";
     campeao.innerHTML = `<div class="result-badge">Campeao oficial: ${officialResults.campeao || "ainda nao definido"}</div>`;
-
     container.appendChild(campeao);
 }
 
 function registrarResultado(roundKey, index, teamName) {
-    if (teamName === "A definir") {
-        return;
-    }
+    if (teamName === "A definir") return;
 
     if (!officialResults[roundKey]) {
         officialResults[roundKey] = [];
@@ -427,7 +415,6 @@ function calcularPontuacao() {
     });
 
     participantes = participantesComPontos.sort((a, b) => b.pontos - a.pontos || a.nome.localeCompare(b.nome));
-
     salvarParticipantes();
     renderRanking();
 
