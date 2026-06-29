@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bolão Copa 2026</title>
-    <link rel="stylesheet" href="./style.css?v=3">
+    <link rel="stylesheet" href="./style.css?v=6">
 </head>
 <body>
     <header>
@@ -25,6 +25,7 @@
                 <input type="text" id="nome" placeholder="Nome do participante">
                 <button onclick="adicionarParticipante()">➕ Adicionar participante</button>
             </div>
+
             <div class="card">
                 <h2>Participantes</h2>
                 <div id="listaParticipantes"></div>
@@ -39,6 +40,7 @@
                 <input type="file" accept="image/*" onchange="salvarFoto(event)">
                 <img id="fotoParticipante" class="foto" alt="Foto do chaveamento" hidden>
             </div>
+
             <div class="card">
                 <h2>Chaveamento completo</h2>
                 <div id="listaJogos"></div>
@@ -68,11 +70,22 @@
     </main>
 
     <nav class="menu">
-        <button onclick="mostrarInicio()"><div class="menu-icon">🏠</div><span>Início</span></button>
-        <button onclick="abrirResultados()"><div class="menu-icon">⚽</div><span>Resultados</span></button>
-        <button onclick="abrirRanking()"><div class="menu-icon">🏆</div><span>Ranking</span></button>
+        <button onclick="mostrarInicio()">
+            <div class="menu-icon">🏠</div>
+            <span>Início</span>
+        </button>
+
+        <button onclick="abrirResultados()">
+            <div class="menu-icon">⚽</div>
+            <span>Resultados</span>
+        </button>
+
+        <button onclick="abrirRanking()">
+            <div class="menu-icon">🏆</div>
+            <span>Ranking</span>
+        </button>
     </nav>
 
-    <script src="./script.js?v=3"></script>
+    <script src="./script.js?v=6"></script>
 </body>
 </html>
